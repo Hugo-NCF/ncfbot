@@ -26,7 +26,7 @@ This is a new, public-sources-only project.
 - `PUBLICBOT-PLANS/PLAN-1.md` through `PLAN-7.md` are design proposals, not factual authorities. Their claims, links, dates, contact details, enrollment figures, terminology, and descriptions must be independently verified.
 - A publicly reachable page is an eligible source; it is not automatically current, controlling, or safe to redistribute in full.
 - Prefer original summaries and structured notes with citations. Keep raw downloads in a gitignored cache unless redistribution is clearly appropriate and necessary.
-- Do not use MyNCF, Canvas, an intranet, authenticated Banner pages, email, student records, private faculty documents, access tokens, cookies, or credentials.
+- Do not use MyNCF, Canvas, an intranet, authenticated Banner pages, email, student records, private faculty documents, access tokens, saved authenticated cookies, or credentials. A short-lived anonymous session cookie created by the public Banner class search itself is allowed only for that public search workflow.
 - Do not configure Canvas MCP or any other private-system integration in Version 1.
 - Do not ask users for student IDs, grades, financial records, health details, passwords, Social Security numbers, application credentials, or other sensitive records.
 
@@ -63,7 +63,7 @@ The existing project was inspected only to identify capability categories and re
 - Its undergraduate/graduate and cohort-specific paths show that generic `student` routing is insufficient when program level or entry year changes the rule.
 - Its calendar and billing quick references show the value of short, question-oriented summaries, but also the danger of repeating dates or amounts without an applicable term, verification date, and live-source warning.
 - Its registration tooling shows that course questions require section-level records, documented field names, scan-first discovery, and a separate fresh lookup for enrollment status. This plan assigns that subsystem to Agent 6 rather than asking skill authors to parse schedules ad hoc.
-- Its historical offering and course-renumbering support is useful but expensive. Version 1 preserves an extensible course schema while treating historical archives and equivalency analysis as stretch work.
+- Its historical offering support demonstrates that the public Banner term list can become a valuable offline archive. Version 1 therefore includes a reproducible all-public-terms listing archive; only speculative renumbering/equivalency analysis remains stretch work.
 - Its mix of public pages, local policy documents, and faculty/advising workflow material demonstrates the central clean-room limitation: the new bot will be less specific wherever the only useful guidance is private or cannot be independently verified as public. The correct replacement is an explicit coverage gap and office route, not copied detail.
 - Its many human-oriented fast paths show why `AGENTS.md` must point to targeted resources and helper commands. The new design adds machine-readable provenance, validation, and freshness reporting so those shortcuts remain auditable.
 
@@ -115,7 +115,7 @@ Version 1 includes:
 - public academic policy and advising information;
 - public faculty-facing information and public workflow boundaries;
 - public admissions, cost, programs, campus life, and visitor information;
-- public current-term course discovery and optional fresh enrollment polling when publicly supported;
+- public current-term and historical course discovery, offline section/history search, and optional fresh enrollment polling when publicly supported;
 - source discovery, provenance, conversion, freshness, retrieval, validation, and evaluation tools;
 - an agent-native operating path and deterministic CLI helpers.
 
@@ -176,7 +176,10 @@ ncfbot/
 │   ├── convert_sources.py                 # Agent 5
 │   ├── validate_sources.py                # Agent 5
 │   ├── check_freshness.py                 # Agent 5
+│   ├── discover_public_terms.py            # Agent 6
 │   ├── fetch_public_courses.py            # Agent 6
+│   ├── fetch_course_details.py             # Agent 6
+│   ├── build_course_history.py             # Agent 6
 │   ├── query_courses.py                   # Agent 6
 │   └── poll_live_sections.py              # Agent 6
 ├── ncfbot/
@@ -335,7 +338,7 @@ Each topic has one primary owner. Other agents reference that owner's resources 
 | Programs and admissions | Agent 4 | Undergraduate/graduate programs; first-year, transfer, international, graduate, and admitted-student pathways |
 | Tuition, aid, housing, dining, campus life, athletics, visits, maps, alumni/community | Agent 4 | Current public orientation and appropriate freshness warnings; no personalized estimates |
 | Public-source discovery and provenance | Agent 5 | robots/sitemaps, allowlists, approval state, fetching, conversion, hashing, metadata, freshness |
-| Public class schedule | Agent 6 | Term discovery, current-term snapshot, section normalization, query, optional live enrollment poll |
+| Public class schedule | Agent 6 | Public-term discovery, all-public-terms historical listing archive, current-term details, offline section/history query, optional live enrollment poll |
 | Retrieval, route helper, repository health, and combined evaluation | Agent 7 | Cross-corpus search, deterministic routing aid, CLI, integration tests, final report |
 
 Preferred source families include official `ncf.edu` pages, the official NCF catalog, official public calendars and PDFs, the public class-schedule system, official NCF-controlled directories, and official third-party systems linked by NCF when specifically approved. Search-engine snippets, reposts, social-media posts, news articles, and archived pages are discovery aids or historical evidence, not default authorities.
@@ -460,6 +463,7 @@ Version 1 is done when:
 - current and historical sources are distinguishable;
 - deadlines, costs, contacts, policies, and requirements are not asserted without evidence;
 - course lookup works at section level and live enrollment claims are never made from a stale snapshot;
+- the public Banner term catalog and historical section archive can be rebuilt without private credentials, and offline history queries identify their coverage window;
 - unsupported/private questions produce honest limits and useful public routing;
 - the deterministic CLI can route, search, inspect sources, query courses, run `doctor`, and validate evaluation data;
 - offline unit tests pass; optional network checks are clearly separated;
@@ -607,7 +611,7 @@ Create concise, independently sourced resources covering at least:
 - answer in practical order: what applies, what to do next, where to do it, risks of delay, and who confirms;
 - translate NCF-specific terms when the user appears unfamiliar;
 - distinguish published rules from individualized advisor judgment;
-- point course discovery to Agent 6's query tool;
+   - point current and historical course discovery to Agent 6's query tool;
 - refuse definitive degree audits, standing determinations, aid determinations, approval predictions, and record-specific answers;
 - include the academic-integrity boundary without becoming unhelpfully broad.
 
@@ -965,14 +969,17 @@ Exact flags may improve, but commands must be documented and noninteractive wher
 
 ### Mission
 
-Build an independently collected public course-data subsystem for current offerings. Course answers must operate at section level, distinguish snapshot from live data, and avoid private registration systems.
+Build an independently collected public Banner course-data subsystem covering every term the public search exposes, plus current offerings and narrow live enrollment checks. Course answers must operate at section level, distinguish historical/archive, current snapshot, and live data, and avoid private registration systems.
 
 ### Owned files
 
 - `docs/course-data.md`
 - `resources/courses/**`
 - `schemas/course-section.schema.json`
+- `tools/discover_public_terms.py`
 - `tools/fetch_public_courses.py`
+- `tools/fetch_course_details.py`
+- `tools/build_course_history.py`
 - `tools/query_courses.py`
 - `tools/poll_live_sections.py`
 - `tests/fixtures/courses/**`
@@ -984,32 +991,78 @@ Build an independently collected public course-data subsystem for current offeri
 1. **Independently discover the official public schedule source.**
    - Begin from current official Registrar/class-schedule pages.
    - Verify that the data is available without authentication and record the public endpoints and terms of use.
-   - Do not use Canvas, private Self-Service, cookies, or code/data from the existing project.
+   - Do not use Canvas, private Self-Service, saved/authenticated cookies, or code/data from the existing project.
+   - It is acceptable to maintain the short-lived anonymous `JSESSIONID` issued by the public class-search site during one retrieval session.
 
-2. **Implement term discovery and snapshot fetching.**
+2. **Implement a complete public-term catalog.**
+   - Enumerate the term selector rather than hard-coding a year range or guessing term codes.
+   - Follow pagination until the public endpoint returns no additional unique exact term codes.
+   - Deduplicate by exact term code and store description, discovery timestamp, source endpoint, and whether the label identifies the term as view-only.
+   - Record the earliest and latest terms actually exposed at collection time. Do not promise coverage before that boundary.
+   - Beware substring matching in the term search: a query such as `2008` can match a code containing those digits rather than the calendar year intended. Validate exact returned codes and descriptions.
+   - Produce `resources/courses/public-terms.json` with top-level metadata plus a `terms` array.
+
+3. **Build the all-public-terms listing archive.**
+   - For every discovered term, create a term-scoped anonymous session and download every result page.
+   - Use `totalCount` and explicit pagination; do not assume one oversized response will always contain the complete term.
+   - Normalize one record per section and deduplicate by `(term_code, crn)` or the documented public equivalent.
+   - Preserve the source's term label and mark the record `listing` detail level.
+   - Record a per-term success/failure count so one failed term cannot silently produce an apparently complete archive.
+   - Write one canonical `resources/courses/historical-sections.jsonl` for offline processing plus compact title/subject scan outputs. Avoid committing many redundant full copies of the same data.
+   - Treat historical enrollment/open fields only as values observed during the archive fetch, never as current availability.
+
+4. **Implement current-term enrichment and on-demand historical detail fetching.**
    - Support an explicit term code; do not hard-code one semester as permanent.
-   - Normalize one record per section.
    - Preserve raw prerequisite/corequisite/restriction text instead of pretending it is a parsed rule tree.
-   - Record source URL, retrieval timestamp, term, record count, and schema version.
+   - Fetch description, prerequisites, corequisites, restrictions, mutual exclusions, catalog details, linked sections, and cross-listed sections from public detail tabs when available.
+   - Treat detail-tab responses as HTML/text fragments that require cleaning, not as normalized prerequisite structures.
+   - Fully enrich the current-term snapshot when request volume is reasonable; fetch historical detail lazily for shortlisted `(term, crn)` pairs rather than hammering every detail endpoint for every old section.
+   - Cache public historical detail responses by term/CRN with retrieval timestamps and allow an explicit refresh bypass.
+   - Record source URL, retrieval timestamp, term, record count, detail level, and schema version.
    - Write a compact current-term JSONL snapshot and a human-readable title/subject scan if repository size remains reasonable.
    - Keep raw responses in a gitignored cache.
 
-3. **Implement query tooling.**
+5. **Build offline course-history views and query tooling.**
+   - Build a grouped history artifact from the canonical section JSONL without discarding the underlying section records.
+   - Group exact course codes conservatively and retain all observed titles, instructors, terms, and attributes.
+   - Support an explicit `--input` so the same query tool can search the current snapshot or historical archive.
    - Filter by term, subject, course code, section, CRN/reference number, instructor, keyword, and attribute when present.
-   - Support compact scan/table output plus full JSON/JSONL output.
+   - Support compact scan/table output, grouped history output, and full JSON/JSONL output.
    - Make broad title/subject scans the recommended discovery path before full-record inspection.
-   - Clearly label how many sections matched and the snapshot timestamp.
+   - Clearly label how many sections matched, the archive coverage window, and the snapshot timestamp.
+   - A changed course code does not establish a different course, and a matching title does not establish official equivalency. Historical search may surface candidates but must not certify renumbering.
 
-4. **Implement narrow live polling if public data supports it.**
+6. **Implement narrow live polling if public data supports it.**
    - Poll only shortlisted sections/CRNs, not the full catalog by default.
    - Report retrieval time and whether seats, waitlist, or open status were actually returned.
    - Refuse to label values `current` after a failed live call.
    - Never infer registration eligibility from seat availability.
 
-5. **Write course-data documentation.**
-   - Explain top-level files, section-level records, exact field names, examples, snapshot limitations, live polling, and common mistakes.
+7. **Implement incremental rebuilds.**
+   - Rediscover the public term catalog on every scheduled rebuild.
+   - Re-fetch current/future terms on each run and permit past terms to be skipped only when a stored hash/count policy says they are unchanged.
+   - Support `--resume` and a failure report so a long historical job can continue safely.
+   - Write generated files atomically so an interrupted run does not replace a valid archive with a partial one.
+   - Record tool/schema version and collection timestamps in every top-level artifact.
+
+8. **Write course-data documentation.**
+   - Explain the anonymous public Banner request sequence, top-level files, section-level records, exact field names, examples, historical coverage, current snapshot limitations, live polling, and common mistakes.
    - Explain that course code changes do not prove equivalency or nonequivalency.
-   - Put historical offerings and renumbering analysis in a documented stretch-goal section, not the required MVP.
+   - Provide a quick-start workflow: scan titles, narrow by filters, inspect full section records, fetch historical details only when necessary, and poll live enrollment only for current status.
+   - Put automated renumbering/equivalency inference in a documented stretch-goal section; the historical archive itself is required Version 1 work.
+
+### Public Banner protocol guidance
+
+This sequence was reverified against the public site on August 31, 2026. It is a discovery map, not code to copy; Agent 6 must reverify it and document any upstream change.
+
+1. `GET https://banapps02.ncf.edu/StudentRegistrationSsb/ssb/term/termSelection?mode=search` to establish an anonymous session.
+2. `GET /StudentRegistrationSsb/ssb/classSearch/getTerms` with `searchTerm`, `offset`, and `max` parameters to enumerate public terms. AJAX-style `X-Requested-With`, `Accept`, and `Referer` headers may be required.
+3. `POST /StudentRegistrationSsb/ssb/term/search?mode=search` in the same session with the selected `term` and the public form's empty optional fields. Verify that the response forwards to `/StudentRegistrationSsb/ssb/classSearch/classSearch`.
+4. `GET /StudentRegistrationSsb/ssb/classSearch/classSearch` in that term-scoped session.
+5. `GET /StudentRegistrationSsb/ssb/searchResults/searchResults` with `txt_term` and bounded pagination parameters. The JSON envelope currently exposes `success`, `totalCount`, and `data`.
+6. For a shortlisted section, use its term and public course reference number with the public detail endpoints currently named `getCourseDescription`, `getSectionPrerequisites`, `getCorequisites`, `getRestrictions`, `getCourseMutuallyExclusions`, `getSectionCatalogDetails`, `getLinkedSections`, and `getXlstSections`.
+
+At verification time, the blank term selector returned 26 public terms from Spring 2017 through Fall 2026. This count and coverage window are observations, not constants. The agent must store whatever the public selector exposes at collection time and must not invent earlier coverage by probing guessed term codes.
 
 ### Required data fields
 
@@ -1019,7 +1072,7 @@ Use the shared course contract and document exact names. At minimum include:
 term_code, term_label, subject, course_number, course_display,
 section, crn, title, instructors, meetings, meeting_summary,
 credits_or_units, attributes, description, prerequisites, corequisites,
-restrictions, source_url, retrieved_at
+restrictions, detail_level, source_url, retrieved_at
 ```
 
 Enrollment fields are optional and must include their own retrieval timestamp.
@@ -1029,33 +1082,46 @@ Enrollment fields are optional and must include their own retrieval timestamp.
 Design stable commands similar to:
 
 ```text
+python tools/discover_public_terms.py --output resources/courses/public-terms.json
+python tools/fetch_public_courses.py --all-public-terms --resume --output resources/courses
 python tools/fetch_public_courses.py --term <TERM> --output resources/courses
+python tools/build_course_history.py --input resources/courses/historical-sections.jsonl
 python tools/query_courses.py --subject <SUBJECT> --format scan
 python tools/query_courses.py --course <CODE> --format full
+python tools/query_courses.py --input resources/courses/historical-sections.jsonl --course <CODE> --format history
 python tools/query_courses.py --crn <CRN> --format json
+python tools/fetch_course_details.py --term <TERM> --crn <CRN> --format json
 python tools/poll_live_sections.py --term <TERM> --crn <CRN>
 ```
 
 ### Evaluation and tests
 
-Write at least 20 cases in `courses.jsonl`, including:
+Write at least 30 cases in `courses.jsonl`, including:
 
+- term discovery and exact-code deduplication;
+- earliest/latest public archive coverage;
+- a partial-term fetch that must not be marked complete;
 - broad subject/title discovery;
 - multiple sections of one course;
 - instructor and meeting-time lookup;
 - description and prerequisite text;
 - attribute filters;
+- grouped multi-term history for one exact course code;
+- title/keyword discovery across changed course codes without claiming equivalency;
+- on-demand historical detail fetching;
 - no-match behavior;
 - stale snapshot open-seat question requiring live poll;
 - live failure behavior;
 - misleading request to guarantee enrollment;
 - ambiguous old/new course-code equivalency.
 
-Unit tests must use small synthetic public-like fixtures created for this repo, not copied data. Test normalization, duplicate sections, filtering, output formats, missing optional fields, malformed records, snapshot timestamp display, and live-versus-snapshot labeling.
+Unit tests must use small synthetic public-like fixtures created for this repo, not copied data. Test term pagination, fuzzy term-search false matches, session bootstrap failure, results pagination, resume behavior, atomic output, normalization, duplicate sections, filtering, history grouping, detail cleaning, output formats, missing optional fields, malformed records, snapshot timestamp display, and live-versus-snapshot labeling.
 
 ### Acceptance criteria
 
 - One section is one record and distinct sections never collapse.
+- The archive covers every exact term returned by the public selector at collection time, or clearly reports failed/incomplete terms.
+- A fresh clone can search the committed normalized historical JSONL offline without contacting Banner.
 - Query output uses documented field names consistently.
 - Current enrollment language always comes from a successful fresh public lookup.
 - Tools work without private credentials.
@@ -1065,8 +1131,10 @@ Unit tests must use small synthetic public-like fixtures created for this repo, 
 
 - Do not reuse current project course exports or scripts.
 - Do not use Canvas for course schedules or assignment data.
+- Do not brute-force guessed term codes beyond the term selector's public results.
+- Do not issue every detail-tab request for every historical section by default.
 - Do not imply that an open section means a user may register.
-- Do not make historical archives/renumbering a blocker for Version 1.
+- Do not present title similarity or a harvested renumbering candidate as official course equivalency.
 
 ---
 
@@ -1119,6 +1187,7 @@ Agent 7 may make narrowly coordinated fixes to `README.md` command examples duri
    - Confirm required files exist.
    - Validate all source and evaluation sidecars/schemas.
    - Find broken internal paths, duplicate IDs, unowned resource locations, missing source footers, overdue reviews, missing generated manifest/index, and unparseable course records.
+   - Verify that the committed public-term catalog and historical JSONL agree on term coverage, and fail clearly when an archive marks a term incomplete.
    - Make clear which failures are offline and which need optional network verification.
 
 5. **Implement evaluation tooling.**
@@ -1133,7 +1202,7 @@ Agent 7 may make narrowly coordinated fixes to `README.md` command examples duri
 
 7. **Integrate and report.**
    - Run every offline test from a clean environment.
-   - Run `doctor`, routing, search, source validation, course queries, and evaluation commands.
+   - Run `doctor`, routing, search, source validation, current and historical course queries, and evaluation commands.
    - Perform optional network smoke tests separately and record date/results.
    - Write `docs/integration-report.md` with merged commit IDs, commands, results, coverage, known gaps, stale sources, and recommended follow-up issues.
 
@@ -1148,6 +1217,7 @@ python -m ncfbot search "withdrawal deadline" --audience students
 python -m ncfbot sources --topic admissions
 python -m ncfbot evaluate
 python tools/query_courses.py --course <CODE> --format full
+python tools/query_courses.py --input resources/courses/historical-sections.jsonl --course <CODE> --format history
 ```
 
 The search result must show resource ID, heading, score, effective period, review state, and public source URLs. It must never present search output as an official decision.
@@ -1162,12 +1232,13 @@ The search result must show resource ID, heading, score, effective period, revie
 - Router handles explicit, inferred, ambiguous, role-independent, and mid-conversation cases.
 - Retrieval favors current authoritative evidence over generic/historical evidence in fixtures.
 - Unsupported topics return no-evidence behavior rather than a guessed answer.
+- Public term metadata, historical section coverage, and grouped history outputs are internally consistent.
 - Course tools and source tools are discoverable and their help commands succeed.
 - Default tests require no network and no API key.
 
 ### Acceptance criteria
 
-- A fresh clone can install, run `doctor`, search resources, query the bundled course snapshot, and execute all offline tests from the README.
+- A fresh clone can install, run `doctor`, search resources, query the bundled current snapshot and historical archive offline, and execute all offline tests from the README.
 - Agent-native use works from the repository root with the master instructions and three role skills.
 - Combined evaluation data has valid schemas and no duplicate IDs.
 - Integration failures are fixed through the owning agent or documented; they are not hidden by weakening tests.
@@ -1186,15 +1257,16 @@ The seven PRs should culminate in a repeatable demonstration containing at least
 
 1. a current student question about a catalog-year-sensitive academic requirement;
 2. a student question about a current course offering, followed by a properly labeled live-seat lookup if supported;
-3. a faculty question whose public portion can be answered and whose final workflow is authenticated;
-4. a prospective-student question combining program and admissions information;
-5. a parent/family cost question with year and residency caveats;
-6. a role-independent calendar or campus-navigation question answered without unnecessary classification;
-7. an ambiguous question that produces one short clarification;
-8. conflicting or stale official sources handled transparently;
-9. a private-record request declined with correct public routing;
-10. an emergency/sensitive prompt handled immediately and safely;
-11. a request to complete graded work redirected to concept-level help;
-12. an unsupported question answered with an honest evidence gap rather than invention.
+3. an offline historical question such as whether a course or topic has appeared in earlier public terms, with the archive coverage window stated;
+4. a faculty question whose public portion can be answered and whose final workflow is authenticated;
+5. a prospective-student question combining program and admissions information;
+6. a parent/family cost question with year and residency caveats;
+7. a role-independent calendar or campus-navigation question answered without unnecessary classification;
+8. an ambiguous question that produces one short clarification;
+9. conflicting or stale official sources handled transparently;
+10. a private-record request declined with correct public routing;
+11. an emergency/sensitive prompt handled immediately and safely;
+12. a request to complete graded work redirected to concept-level help;
+13. an unsupported question answered with an honest evidence gap rather than invention.
 
 The reviewer should be able to trace each factual answer from the selected skill to a local resource, its provenance sidecar, and the original public source.
