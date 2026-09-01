@@ -1,46 +1,120 @@
 # Programs and Academic Offerings
 
-Scope: Public orientation to current undergraduate and graduate program discovery and NCF program terminology. This resource does not reproduce individual program requirements.
 Verified through: 2026-08-31
-Applies to: Prospective students, applicants, families, counselors, and other public users; program availability should be rechecked when current offerings matter.
 
-## How to discover programs
+## Scope
 
-New College publishes a public program directory and an academic catalog. Use the public program directory for orientation and the applicable catalog for binding academic requirements.
+Use this resource for public program discovery: what undergraduate majors New College currently advertises, how New College terminology maps to familiar terms such as “major,” and what graduate programs are publicly listed. Use the applicable Academic Catalog for binding degree requirements.
 
-The current public accreditation page lists undergraduate credentials across multiple fields and identifies graduate programs including Applied Data Science and Marine Mammal Science. Program availability and credential labels can change, so a current program/catalog check is required before claiming that a program is currently offered.
+## Current undergraduate offerings
 
-## Undergraduate terminology
+New College calls a primary undergraduate field an **Area of Concentration (AOC)**. The current public Undergraduate Majors page lists the following offerings:
 
-New College uses the term **Area of Concentration (AOC)** for a major-like undergraduate field of study. The current catalog's Area of Concentration page explicitly describes an AOC as similar to a major.
+- Animal Wellbeing & Conservation
+- Anthropology
+- Applied Mathematics
+- Art
+- Art History
+- Biochemistry
+- Biology
+- Biopsychology
+- Chemistry
+- Chinese Language & Culture
+- Classics
+- Computer Science
+- Creative Writing
+- Data Science
+- Economics
+- English
+- Environmental Studies
+- Finance
+- French
+- German
+- Greek
+- Health, Culture & Societies
+- History
+- Humanities
+- Individualized Area of Concentration
+- International & Area Studies
+- Latin
+- Literature
+- Marine Biology
+- Mathematics
+- Medieval & Renaissance Studies
+- Museum Studies
+- Music
+- Natural Sciences
+- Neuroscience
+- Philosophy
+- Physics
+- Political Science
+- Psychology
+- Public Policy
+- Quantitative Social Science
+- Religion
+- Rhetoric & Writing
+- Russian Language & Literature
+- Social Sciences
+- Sociology
+- Spanish
+- Statistics
+- Theatre, Dance and Performance Studies
 
-The accreditation page uses credential labels including:
+The program-discovery page also identifies **Pre-Law** and **Pre-Health** as pre-professional programs. Do not present a pre-professional track as a separate degree unless the applicable catalog says it is one.
 
-- **AOC** — Area of Concentration;
-- **Joint** — a joint concentration completed with another AOC;
-- **Minor** — a secondary field;
-- **Certificate** — a certificate credential where listed.
+For “What can I major in?” questions, name relevant current offerings rather than answering only with “50+ majors.” If the user has an interest area, narrow the inventory to programs that actually appear on the official list.
 
-Define unfamiliar terms when speaking with outside users instead of assuming they know NCF terminology.
+## AOC, joint concentration, minor, and individualized study
+
+- **Area of Concentration (AOC):** New College's term for the primary undergraduate field, similar to a major.
+- **Joint concentration:** study combining two fields under the catalog's joint-concentration structure.
+- **Minor:** a secondary field where that credential is available.
+- **Individualized Area of Concentration:** a separately listed option for an approved individualized program of study.
+
+The program marketing page is useful for **discovery**. The applicable Academic Catalog is the stronger authority for degree requirements, credential type, curriculum, and catalog-year applicability.
 
 ## Graduate programs
 
-The current public Graduate Admissions page lists three graduate programs: Applied Data Science, Marine Mammal Science, and a Master of Education in Educational Leadership.
+The current public Graduate Admissions page lists three graduate programs:
 
-There is a current public-source coverage conflict: the accreditation page still lists Applied Data Science and Marine Mammal Science as graduate programs but does not yet list Educational Leadership, while the graduate admissions page does list Educational Leadership. The publicly available 2025-2026 graduate catalog also predates the current 2026-2027 cycle. For current program discovery, report the three programs shown by Graduate Admissions and disclose this mismatch when completeness or accreditation-list coverage matters. For binding degree or admission requirements, use the applicable current catalog/program authority rather than assuming the older catalog controls a newly listed program.
+- Applied Data Science
+- Marine Mammal Science
+- Educational Leadership (M.Ed.)
+
+There is a current public-source coverage conflict: the accreditation page still lists Applied Data Science and Marine Mammal Science as graduate programs but does not yet list Educational Leadership, while Graduate Admissions and the general Academics page list Educational Leadership. The publicly available graduate catalog at verification time is labeled **2025-2026**, so it predates the newer operational program listing.
+
+For current program discovery, report the three programs shown by Graduate Admissions and disclose this mismatch when completeness, accreditation-list coverage, or binding requirements matter. For degree requirements, use the applicable current catalog/program authority rather than assuming the older catalog controls a newly listed program.
 
 ## Marketing pages versus controlling requirements
 
-Program pages can help a prospective student understand subjects, faculty interests, and opportunities. They do not override the applicable academic catalog. Do not promise that a course, concentration, specialization, internship, research opportunity, or credential will be available to a particular person without current supporting evidence.
+Program and admissions pages can describe offerings in accessible or promotional language. They are useful for discovering possibilities, but do not turn a marketing phrase into a degree requirement. For questions such as required courses, thesis rules, graduation requirements, or which catalog applies to a student, use the applicable catalog and the academic/student domain.
 
-## Cross-role boundary
+## Stable versus volatile information
 
-Once a user is asking how a current student's requirements apply to their own academic plan, route to the student skill and Agent 2's academic resources after they are available.
+**Relatively stable**
+- New College uses AOC terminology;
+- joint concentrations, minors, and individualized study can exist where officially listed.
+
+**Volatile / verify**
+- the inventory and exact names of undergraduate programs;
+- whether a credential is an AOC, joint concentration, minor, certificate, or pre-professional track;
+- graduate-program inventory;
+- program admissions requirements;
+- newly launched or discontinued programs.
+
+## Boundaries and gaps
+
+- Do not invent a program because a subject appears in a course list.
+- Do not claim every public program page represents an independently available major.
+- Do not copy a full degree audit into an outside-facing answer.
+- Do not promise that a program, concentration, course, or faculty specialty will be available in a future term.
+- If the public program page and catalog disagree, state the discrepancy and use the applicable catalog for binding academic requirements.
+- The public catalog available at verification time is labeled **2025-2026**; re-check for a newer catalog before answering a question whose outcome depends on current binding requirements.
 
 ## Sources
 
-- [New College Programs](https://www.ncf.edu/programs/)
-- [Accreditation and available programs](https://www.ncf.edu/about/accreditation/)
+- [Undergraduate Programs](https://www.ncf.edu/programs/)
+- [Accreditation and Credential Listing](https://www.ncf.edu/about/accreditation/)
 - [2025-2026 Undergraduate Catalog](https://catalog.ncf.edu/undergraduate/)
 - [2025-2026 Graduate Catalog](https://catalog.ncf.edu/graduate/)
 - [Graduate Admissions](https://www.ncf.edu/admissions/graduate/)
